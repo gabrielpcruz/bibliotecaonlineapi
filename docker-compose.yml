@@ -1,0 +1,20 @@
+version: '3'
+services:
+  webserver:
+    build:
+      context: ./config/docker
+    container_name: bibliotecaonlineapi
+    restart: on-failure
+    expose:
+      - '9000'
+    ports:
+      - '80:80'
+    volumes:
+      - '${DOCUMENT_ROOT-./}:/var/www/html'
+      - '${DEFAULT_HOST-./}:/etc/nginx/sites-enabled'
+      - '${DEFAULT_HOST-./}:/etc/nginx/sites-available'
+      - '${PHP_INI_PATH-./}:/etc/php/5.6/fpm/php.ini'
+    environment:
+      PHP_XDEBUG_ENABLED: 1
+      XDEBUG_CONFIG: remote_host=host.docker.internal
+      PHP_IDE_CONFIG: serverName=localhost
