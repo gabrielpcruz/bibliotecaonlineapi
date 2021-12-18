@@ -4,28 +4,29 @@ namespace App\Entity;
 
 use App\Repository\BookRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=BookRepository::class)
  */
-class Book
+class Book implements JsonSerializable
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=false)
      */
-    private $title;
+    private string $title;
 
     /**
-     * @ORM\Column(type="string", length=13)
+     * @ORM\Column(type="string", length=13, nullable=false)
      */
-    private $isbn;
+    private string $isbn;
 
     public function getId(): ?int
     {
@@ -54,5 +55,14 @@ class Book
         $this->isbn = $isbn;
 
         return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            "id" => $this->getId(),
+            "title" => $this->getTitle(),
+            "isbn" => $this->getIsbn(),
+        ];
     }
 }
