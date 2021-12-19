@@ -81,6 +81,16 @@ class Book implements JsonSerializable
             "id" => $this->getId(),
             "title" => $this->getTitle(),
             "isbn" => $this->getIsbn(),
+            "_link" => [
+                [
+                    'rel' => 'self',
+                    'path' => '/books/' . $this->getId()
+                ],
+                [
+                    'rel' => 'genre',
+                    'path' => '/genre/' . $this->getGenre()->getId()
+                ]
+            ]
         ];
     }
 }

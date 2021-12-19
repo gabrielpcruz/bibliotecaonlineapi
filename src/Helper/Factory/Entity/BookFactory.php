@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Helper\Entity;
+namespace App\Helper\Factory\Entity;
 
 use App\Entity\Book;
 use App\Message\Book as BookMessage;
 use App\Repository\GenreRepository;
 use InvalidArgumentException;
 
-class BookFactory implements EntityFactoryFromJsonInterface
+class BookFactory implements FactoryFromJsonInterface
 {
     private GenreRepository $genreRepository;
 

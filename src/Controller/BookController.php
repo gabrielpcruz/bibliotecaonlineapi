@@ -3,13 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Book;
-use App\Helper\Entity\BookFactory;
+use App\Helper\Factory\Entity\BookFactory;
 use App\Message\Book as BookMessage;
 use App\Message\System as SystemMessage;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use http\Exception\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
