@@ -28,6 +28,12 @@ class Book implements JsonSerializable
      */
     private string $isbn;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Genre::class, inversedBy="books")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private Genre $genre;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -53,6 +59,18 @@ class Book implements JsonSerializable
     public function setIsbn(string $isbn): self
     {
         $this->isbn = $isbn;
+
+        return $this;
+    }
+
+    public function getGenre(): ?Genre
+    {
+        return $this->genre;
+    }
+
+    public function setGenre(?Genre $genre): self
+    {
+        $this->genre = $genre;
 
         return $this;
     }
