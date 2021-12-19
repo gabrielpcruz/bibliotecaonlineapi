@@ -3,8 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Book;
+use App\Helper\Entity\BookFactory;
+use App\Message\Book as BookMessage;
+use App\Message\System as SystemMessage;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use HttpInvalidParamException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,13 +29,23 @@ class BookController extends AbstractController
     private EntityManagerInterface $manager;
 
     /**
+     * @var BookFactory
+     */
+    private BookFactory $bookFactory;
+
+    /**
      * @param BookRepository $bookRepository
      * @param EntityManagerInterface $manager
+     * @param BookFactory $bookFactory
      */
-    public function __construct(BookRepository $bookRepository, EntityManagerInterface $manager)
-    {
+    public function __construct(
+        BookRepository $bookRepository,
+        EntityManagerInterface $manager,
+        BookFactory $bookFactory
+    ) {
         $this->bookRepository = $bookRepository;
         $this->manager = $manager;
+        $this->bookFactory = $bookFactory;
     }
 
     /**
@@ -51,12 +66,9 @@ class BookController extends AbstractController
         try {
             $this->manager->beginTransaction();
 
-            $title = $request->get('title');
-            $isbn = $request->get('isbn');
-
-            $book = new Book();
-            $book->setTitle($title);
-            $book->setIsbn($isbn);
+            $book = $this->bookFactory->fromJson(
+                $request->getContent()
+            );
 
             $this->manager->persist($book);
             $this->manager->flush();
@@ -65,13 +77,79 @@ class BookController extends AbstractController
         } catch (\Error $exception) {
             $this->manager->rollback();
 
+            return new JsonResponse(
+                [
+                    "message" => SystemMessage::SY0001
+                ],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        } catch (HttpInvalidParamException $e) {
+            return new JsonResponse(
+                [
+                    "message" => $e->getMessage()
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        return new JsonResponse($book, Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/books/{id}", name="book_show", methods={"GET"})
+     */
+    public function show($id): JsonResponse
+    {
+        try {
+            $book = $this->manager->find(Book::class, $id);
+
+            if (!$book) {
+                return new JsonResponse(
+                    [
+                        "message" => BookMessage::BK0002
+                    ],
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+        } catch (Exception $exception) {
+            $this->manager->rollback();
+
             return new JsonResponse([
-                "message" => "Please, improve the correctly parameters to add a new Book."
+                "message" => SystemMessage::SY0001
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-
         return new JsonResponse($book, Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/books/{id}", name="book_delete", methods={"DELETE"})
+     */
+    public function delete($id): JsonResponse
+    {
+        try {
+            $book = $this->manager->find(Book::class, $id);
+
+            if (!$book) {
+                return new JsonResponse(
+                    [
+                        "message" => BookMessage::BK0002
+                    ],
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+
+            $this->manager->remove($book);
+            $this->manager->flush($book);
+        } catch (Exception $exception) {
+            $this->manager->rollback();
+
+            return new JsonResponse([
+                "message" => SystemMessage::SY0001
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return new JsonResponse([], Response::HTTP_OK);
     }
 
     /**
@@ -85,25 +163,38 @@ class BookController extends AbstractController
             $book = $this->manager->find(Book::class, $id);
 
             if (!$book) {
-                return new JsonResponse([
-                    "message" => "Book not found. Please check if the resouce is realy created."
-                ], Response::HTTP_NOT_FOUND);
+                return new JsonResponse(
+                    [
+                        "message" => BookMessage::BK0002
+                    ],
+                    Response::HTTP_NOT_FOUND
+                );
             }
 
-            $book->setTitle($request->get('title'));
-            $book->setIsbn($request->get('isbn'));
+            $bookRequest = $this->bookFactory->fromJson(
+                $request->getContent()
+            );
+
+            $book->setTitle($bookRequest->getTitle());
+            $book->setIsbn($bookRequest->getIsbn());
 
             $this->manager->flush();
 
             $this->manager->commit();
-        } catch (\Error $exception) {
+        } catch (HttpInvalidParamException $e) {
+            return new JsonResponse(
+                [
+                    "message" => $e->getMessage()
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } catch (Exception $exception) {
             $this->manager->rollback();
 
             return new JsonResponse([
-                "message" => "Please, improve the correctly parameters to edit a new Book."
+                "message" => SystemMessage::SY0001
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
 
         return new JsonResponse($book, Response::HTTP_OK);
     }
