@@ -9,7 +9,7 @@ use App\Message\System as SystemMessage;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use HttpInvalidParamException;
+use http\Exception\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -74,7 +74,14 @@ class BookController extends AbstractController
             $this->manager->flush();
 
             $this->manager->commit();
-        } catch (\Error $exception) {
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse(
+                [
+                    "message" => $e->getMessage()
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } catch (Exception $exception) {
             $this->manager->rollback();
 
             return new JsonResponse(
@@ -82,13 +89,6 @@ class BookController extends AbstractController
                     "message" => SystemMessage::SY0001
                 ],
                 Response::HTTP_INTERNAL_SERVER_ERROR
-            );
-        } catch (HttpInvalidParamException $e) {
-            return new JsonResponse(
-                [
-                    "message" => $e->getMessage()
-                ],
-                Response::HTTP_BAD_REQUEST
             );
         }
 
@@ -181,7 +181,7 @@ class BookController extends AbstractController
             $this->manager->flush();
 
             $this->manager->commit();
-        } catch (HttpInvalidParamException $e) {
+        } catch (\InvalidArgumentException $e) {
             return new JsonResponse(
                 [
                     "message" => $e->getMessage()
