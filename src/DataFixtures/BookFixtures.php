@@ -4,19 +4,12 @@ namespace App\DataFixtures;
 
 use App\Entity\Book;
 use App\Entity\Genre;
-use App\Repository\GenreRepository;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
 
-class BooksFixtures
+class BookFixtures extends Fixture
 {
-    private GenreRepository $genreRepository;
-
-    public function __construct(GenreRepository $genreRepository)
-    {
-        $this->genreRepository = $genreRepository;
-    }
-
     /**
      * @throws Exception
      */
@@ -24,26 +17,25 @@ class BooksFixtures
     {
         $this->loadGenresDependency($manager);
 
+        $genreRepository = $manager->getRepository(Genre::class);
+
         for ($i = 0; $i < 100; $i++) {
             $book = new Book();
             $book->setTitle("Some title for a some book ({$i})");
             $book->setIsbn(random_int(1000000000000, PHP_INT_MAX));
 
-            $genre_id = random_int(1, 8);
             $genreFound = false;
 
             while (!$genreFound) {
-                $genre_id = random_int(1, 8);
-
-                $genreFound = $this->genreRepository->find($genre_id);
+                $genreFound = $genreRepository->find(random_int(1, 8));
             }
 
             $book->setGenre($genreFound);
 
             $manager->persist($book);
-        }
+            $manager->flush();
 
-        $manager->flush();
+        }
     }
 
     private function loadGenresDependency(ObjectManager $manager): void
@@ -65,8 +57,7 @@ class BooksFixtures
             $genre->setDescription($description);
 
             $manager->persist($genre);
+            $manager->flush();
         }
-
-        $manager->flush();
     }
 }
