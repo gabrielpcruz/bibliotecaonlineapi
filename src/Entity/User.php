@@ -6,13 +6,15 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
+use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, LegacyPasswordAuthenticatedUserInterface, JsonSerializable
 {
     /**
      * @ORM\Id
@@ -41,6 +43,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\OneToMany(targetEntity=Book::class, mappedBy="user")
      */
     private $books;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=false, unique=true)
+     */
+    private $email;
 
     public function __construct()
     {
@@ -159,5 +166,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            "username" => $this->getUserIdentifier(),
+            "email" => $this->getEmail(),
+        ];
     }
 }

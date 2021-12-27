@@ -4,7 +4,10 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -17,9 +20,14 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    private UserPasswordHasherInterface $hasher;
+
+    public function __construct(
+        ManagerRegistry $registry,
+        UserPasswordHasherInterface $hasher
+    ) {
         parent::__construct($registry, User::class);
+        $this->hasher = $hasher;
     }
 
     /**
@@ -34,5 +42,25 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newHashedPassword);
         $this->_em->persist($user);
         $this->_em->flush();
+    }
+
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
+    public function create($data): User
+    {
+        $user = new User();
+        $user->setUsername($data->username);
+        $user->setEmail($data->email);
+
+        $password = $this->hasher->hashPassword($user, $data->password);
+
+        $user->setPassword($password);
+
+        $this->_em->persist($user);
+        $this->_em->flush();
+
+        return $user;
     }
 }
