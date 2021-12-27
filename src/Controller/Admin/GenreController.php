@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Genre;
 use App\Helper\Factory\Entity\GenreFactory;
@@ -34,7 +34,7 @@ class GenreController extends AbstractController
     }
 
     /**
-     * @Route("/api/genre", name="genre_list", methods={"GET"})
+     * @Route("/admin/api/genre", name="genre_list", methods={"GET"})
      */
     public function all(): JsonResponse
     {
@@ -44,7 +44,7 @@ class GenreController extends AbstractController
     }
 
     /**
-     * @Route("/api/genre", name="genre_add", methods={"POST"})
+     * @Route("/admin/api/genre", name="genre_add", methods={"POST"})
      */
     public function add(Request $request): JsonResponse
     {
@@ -81,7 +81,7 @@ class GenreController extends AbstractController
     }
 
     /**
-     * @Route("/api/genre/{id}", name="genre_show", methods={"GET"})
+     * @Route("/admin/api/genre/{id}", name="genre_show", methods={"GET"})
      */
     public function show($id): JsonResponse
     {
