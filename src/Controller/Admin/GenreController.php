@@ -2,7 +2,6 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Genre;
 use App\Helper\Factory\Entity\GenreFactory;
 use App\Message\Genre as GenreMessage;
 use App\Message\System as SystemMessage;
@@ -34,7 +33,7 @@ class GenreController extends AbstractController
     }
 
     /**
-     * @Route("/admin/api/genre", name="genre_list", methods={"GET"})
+     * @Route("/api/genre", name="genre_list", methods={"GET"})
      */
     public function all(): JsonResponse
     {
@@ -51,11 +50,11 @@ class GenreController extends AbstractController
         try {
             $this->manager->beginTransaction();
 
-            $book = $this->genreFactory->fromJson(
+            $genre = $this->genreFactory->fromJson(
                 $request->getContent()
             );
 
-            $this->manager->persist($book);
+            $this->manager->persist($genre);
             $this->manager->flush();
 
             $this->manager->commit();
@@ -77,16 +76,20 @@ class GenreController extends AbstractController
             );
         }
 
-        return new JsonResponse($book, Response::HTTP_OK);
+        return new JsonResponse($genre, Response::HTTP_OK);
     }
 
     /**
-     * @Route("/admin/api/genre/{id}", name="genre_show", methods={"GET"})
+     * @Route("/admin/api/genre/{id}", name="genre_update", methods={"PUT"})
      */
-    public function show($id): JsonResponse
+    public function update($id, Request $request): JsonResponse
     {
         try {
-            $genre = $this->manager->find(Genre::class, $id);
+            $this->manager->beginTransaction();
+
+            $genre = $this->genreRepository->findOneBy([
+                'id' => $id
+            ]);
 
             if (!$genre) {
                 return new JsonResponse(
@@ -96,6 +99,24 @@ class GenreController extends AbstractController
                     Response::HTTP_NOT_FOUND
                 );
             }
+
+            $genreRequest = $this->genreFactory->fromJson(
+                $request->getContent()
+            );
+
+            $genre->setDescription($genreRequest->getDescription());
+            $genre->setName($genreRequest->getName());
+
+            $this->manager->flush();
+
+            $this->manager->commit();
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse(
+                [
+                    "message" => $e->getMessage()
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
         } catch (Exception $exception) {
             $this->manager->rollback();
 
