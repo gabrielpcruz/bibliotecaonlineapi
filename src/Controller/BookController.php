@@ -48,7 +48,7 @@ class BookController extends AbstractController
     }
 
     /**
-     * @Route("/books", name="book_list", methods={"GET"})
+     * @Route("/api/books", name="book_list", methods={"GET"})
      */
     public function all(): JsonResponse
     {
@@ -58,7 +58,7 @@ class BookController extends AbstractController
     }
 
     /**
-     * @Route("/books", name="book_add", methods={"POST"})
+     * @Route("/api/books", name="book_add", methods={"POST"})
      */
     public function add(Request $request): JsonResponse
     {
@@ -95,7 +95,7 @@ class BookController extends AbstractController
     }
 
     /**
-     * @Route("/books/{id}", name="book_show", methods={"GET"})
+     * @Route("/api/books/{id}", name="book_show", methods={"GET"})
      */
     public function show($id): JsonResponse
     {
@@ -122,7 +122,7 @@ class BookController extends AbstractController
     }
 
     /**
-     * @Route("/books/{id}", name="book_delete", methods={"DELETE"})
+     * @Route("/api/books/{id}", name="book_delete", methods={"DELETE"})
      */
     public function delete($id): JsonResponse
     {
@@ -152,7 +152,7 @@ class BookController extends AbstractController
     }
 
     /**
-     * @Route("/books/{id}", name="book_update", methods={"PUT"})
+     * @Route("/api/books/{id}", name="book_update", methods={"PUT"})
      */
     public function update($id, Request $request): JsonResponse
     {
