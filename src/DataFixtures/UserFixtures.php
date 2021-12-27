@@ -12,7 +12,8 @@ class UserFixtures extends Fixture
     {
         $user = new User();
         $user->setUsername("usuario")
-            ->setPassword('$argon2id$v=19$m=65536,t=4,p=1$zoGJ621AOwsktV5wAVNMTQ$LuoXX1RT/ti98JcHzwBj9jtFhQKfs67Tm2sAs50Yk6w');
+            ->setPassword('$argon2id$v=19$m=65536,t=4,p=1$zoGJ621AOwsktV5wAVNMTQ$LuoXX1RT/ti98JcHzwBj9jtFhQKfs67Tm2sAs50Yk6w')
+            ->setEmail('email@email.com');
 
         $manager->persist($user);
 
