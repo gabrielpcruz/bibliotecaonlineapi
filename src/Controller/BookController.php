@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 class BookController extends AbstractController
 {
@@ -31,20 +32,24 @@ class BookController extends AbstractController
      * @var BookFactory
      */
     private BookFactory $bookFactory;
+    private Security $security;
 
     /**
      * @param BookRepository $bookRepository
      * @param EntityManagerInterface $manager
      * @param BookFactory $bookFactory
+     * @param Security $security
      */
     public function __construct(
         BookRepository $bookRepository,
         EntityManagerInterface $manager,
-        BookFactory $bookFactory
+        BookFactory $bookFactory,
+        Security $security
     ) {
         $this->bookRepository = $bookRepository;
         $this->manager = $manager;
         $this->bookFactory = $bookFactory;
+        $this->security = $security;
     }
 
     /**
@@ -52,7 +57,9 @@ class BookController extends AbstractController
      */
     public function all(): JsonResponse
     {
-        $books = $this->bookRepository->findAll();
+        $books = $this->bookRepository->findBy([
+            'user' => $this->security->getUser()
+        ]);
 
         return new JsonResponse($books, Response::HTTP_OK);
     }
@@ -68,6 +75,8 @@ class BookController extends AbstractController
             $book = $this->bookFactory->fromJson(
                 $request->getContent()
             );
+
+            $book->setUser($this->security->getUser());
 
             $this->manager->persist($book);
             $this->manager->flush();
@@ -100,7 +109,10 @@ class BookController extends AbstractController
     public function show($id): JsonResponse
     {
         try {
-            $book = $this->manager->find(Book::class, $id);
+            $book = $this->bookRepository->findOneBy([
+                'user' => $this->security->getUser(),
+                'id' => $id
+            ]);
 
             if (!$book) {
                 return new JsonResponse(
@@ -127,7 +139,10 @@ class BookController extends AbstractController
     public function delete($id): JsonResponse
     {
         try {
-            $book = $this->manager->find(Book::class, $id);
+            $book = $this->bookRepository->findOneBy([
+                'user' => $this->security->getUser(),
+                'id' => $id
+            ]);
 
             if (!$book) {
                 return new JsonResponse(
@@ -159,7 +174,10 @@ class BookController extends AbstractController
         try {
             $this->manager->beginTransaction();
 
-            $book = $this->manager->find(Book::class, $id);
+            $book = $this->bookRepository->findOneBy([
+                'user' => $this->security->getUser(),
+                'id' => $id
+            ]);
 
             if (!$book) {
                 return new JsonResponse(

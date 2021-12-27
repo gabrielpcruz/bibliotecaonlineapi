@@ -4,11 +4,13 @@ namespace App\DataFixtures;
 
 use App\Entity\Book;
 use App\Entity\Genre;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
 
-class BookFixtures extends Fixture
+class BookFixtures extends Fixture implements DependentFixtureInterface
 {
     /**
      * @throws Exception
@@ -18,6 +20,7 @@ class BookFixtures extends Fixture
         $this->loadGenresDependency($manager);
 
         $genreRepository = $manager->getRepository(Genre::class);
+        $userRepository = $manager->getRepository(User::class);
 
         for ($i = 0; $i < 100; $i++) {
             $book = new Book();
@@ -31,10 +34,10 @@ class BookFixtures extends Fixture
             }
 
             $book->setGenre($genreFound);
+            $book->setUser($userRepository->find(1));
 
             $manager->persist($book);
             $manager->flush();
-
         }
     }
 
@@ -59,5 +62,12 @@ class BookFixtures extends Fixture
             $manager->persist($genre);
             $manager->flush();
         }
+    }
+
+    public function getDependencies(): array
+    {
+        return [
+            UserFixtures::class
+        ];
     }
 }
