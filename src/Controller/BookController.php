@@ -2,10 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Book;
+use App\Error\Message;
 use App\Helper\Factory\Entity\BookFactory;
-use App\Message\Book as BookMessage;
-use App\Message\System as SystemMessage;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -94,7 +92,7 @@ class BookController extends AbstractController
 
             return new JsonResponse(
                 [
-                    "message" => SystemMessage::SY0001
+                    "message" => Message::MG0005
                 ],
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
@@ -117,7 +115,7 @@ class BookController extends AbstractController
             if (!$book) {
                 return new JsonResponse(
                     [
-                        "message" => BookMessage::BK0002
+                        "message" => Message::MG0002
                     ],
                     Response::HTTP_NOT_FOUND
                 );
@@ -126,7 +124,7 @@ class BookController extends AbstractController
             $this->manager->rollback();
 
             return new JsonResponse([
-                "message" => SystemMessage::SY0001
+                "message" => Message::MG0005
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
@@ -147,7 +145,7 @@ class BookController extends AbstractController
             if (!$book) {
                 return new JsonResponse(
                     [
-                        "message" => BookMessage::BK0002
+                        "message" => Message::MG0002
                     ],
                     Response::HTTP_NOT_FOUND
                 );
@@ -159,7 +157,7 @@ class BookController extends AbstractController
             $this->manager->rollback();
 
             return new JsonResponse([
-                "message" => SystemMessage::SY0001
+                "message" => Message::MG0005
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
@@ -182,7 +180,7 @@ class BookController extends AbstractController
             if (!$book) {
                 return new JsonResponse(
                     [
-                        "message" => BookMessage::BK0002
+                        "message" => Message::MG0002
                     ],
                     Response::HTTP_NOT_FOUND
                 );
@@ -209,7 +207,7 @@ class BookController extends AbstractController
             $this->manager->rollback();
 
             return new JsonResponse([
-                "message" => SystemMessage::SY0001
+                "message" => Message::MG0005
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 

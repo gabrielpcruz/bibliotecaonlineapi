@@ -2,7 +2,8 @@
 
 namespace App\Controller;
 
-use App\Message\System as SystemMessage;
+use App\Error\Message;
+use App\Error\Message\System as SystemMessage;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -41,7 +42,7 @@ class AuthController extends AbstractController
         } catch (UniqueConstraintViolationException $exception) {
             return new JsonResponse(
                 [
-                    "message" => SystemMessage::SY0002
+                    "message" => Message::MG0006
                 ],
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
@@ -49,7 +50,7 @@ class AuthController extends AbstractController
             var_dump($exception);
             return new JsonResponse(
                 [
-                    "message" => SystemMessage::SY0001
+                    "message" => Message::MG0005
                 ],
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );

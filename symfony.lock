@@ -32,6 +32,15 @@
     "codeception/lib-asserts": {
         "version": "2.0.0"
     },
+    "codeception/lib-innerbrowser": {
+        "version": "2.0.1"
+    },
+    "codeception/module-asserts": {
+        "version": "2.0.1"
+    },
+    "codeception/module-phpbrowser": {
+        "version": "2.0.2"
+    },
     "codeception/phpunit-wrapper": {
         "version": "9.0.7"
     },
@@ -142,6 +151,12 @@
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
     },
+    "guzzlehttp/guzzle": {
+        "version": "7.4.1"
+    },
+    "guzzlehttp/promises": {
+        "version": "1.5.1"
+    },
     "guzzlehttp/psr7": {
         "version": "2.1.0"
     },
@@ -231,6 +246,9 @@
     "psr/event-dispatcher": {
         "version": "1.0.0"
     },
+    "psr/http-client": {
+        "version": "1.0.1"
+    },
     "psr/http-factory": {
         "version": "1.0.1"
     },
@@ -291,6 +309,9 @@
     "sebastian/version": {
         "version": "3.0.2"
     },
+    "symfony/browser-kit": {
+        "version": "v5.4.3"
+    },
     "symfony/cache": {
         "version": "v5.4.0"
     },
@@ -323,6 +344,9 @@
     },
     "symfony/doctrine-bridge": {
         "version": "v5.4.1"
+    },
+    "symfony/dom-crawler": {
+        "version": "v5.4.3"
     },
     "symfony/dotenv": {
         "version": "v5.4.0"
