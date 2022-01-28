@@ -55,6 +55,7 @@ class BookFactoryTest extends Unit
 
         $this->assertEquals(Book::class, get_class($book));
         $this->assertEquals(13, strlen($book->getIsbn()));
+        $this->assertEquals(Genre::class, get_class($book->getGenre()));
     }
 
     /**
