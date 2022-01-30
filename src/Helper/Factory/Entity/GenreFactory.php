@@ -3,7 +3,8 @@
 namespace App\Helper\Factory\Entity;
 
 use App\Entity\Genre;
-use App\Message\Genre as GenreMessage;
+use App\Error\Code;
+use App\Error\Message;
 use InvalidArgumentException;
 
 
@@ -14,7 +15,7 @@ class GenreFactory implements FactoryFromJsonInterface
         $data = json_decode($json);
 
         if (!$data) {
-            throw new InvalidArgumentException(GenreMessage::GR0001);
+            throw new InvalidArgumentException(Message::MG0003, Code::CD0003);
         }
 
         if (
@@ -22,7 +23,7 @@ class GenreFactory implements FactoryFromJsonInterface
             !property_exists($data, 'name') ||
             !property_exists($data, 'description')
         ) {
-            throw new InvalidArgumentException(GenreMessage::GR0001);
+            throw new InvalidArgumentException(Message::MG0003, Code::CD0003);
         }
 
         $genre = new Genre();

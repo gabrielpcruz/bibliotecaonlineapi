@@ -3,7 +3,8 @@
 namespace App\Helper\Factory\Entity;
 
 use App\Entity\Book;
-use App\Message\Book as BookMessage;
+use App\Error\Code;
+use App\Error\Message;
 use App\Repository\GenreRepository;
 use InvalidArgumentException;
 
@@ -24,7 +25,7 @@ class BookFactory implements FactoryFromJsonInterface
         $data = json_decode($json);
 
         if (!$data) {
-            throw new InvalidArgumentException(BookMessage::BK0001);
+            throw new InvalidArgumentException(Message::MG0001, Code::CD0001);
         }
 
         if (
@@ -33,7 +34,7 @@ class BookFactory implements FactoryFromJsonInterface
             !property_exists($data, 'isbn') ||
             !property_exists($data, 'genre_id')
         ) {
-            throw new InvalidArgumentException(BookMessage::BK0001);
+            throw new InvalidArgumentException(Message::MG0001, Code::CD0001);
         }
 
         $book = new Book();
@@ -43,7 +44,7 @@ class BookFactory implements FactoryFromJsonInterface
         $genre = $this->genreRepository->find($data->genre_id);
 
         if (!$genre) {
-            throw new InvalidArgumentException(BookMessage::BK0001);
+            throw new InvalidArgumentException(Message::MG0001, Code::CD0001);
         }
 
         $book->setGenre($genre);

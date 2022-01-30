@@ -2,9 +2,10 @@
 
 namespace App\Controller\Admin;
 
+use App\Error\Message;
+use App\Error\Message\Genre as GenreMessage;
+use App\Error\Message\System as SystemMessage;
 use App\Helper\Factory\Entity\GenreFactory;
-use App\Message\Genre as GenreMessage;
-use App\Message\System as SystemMessage;
 use App\Repository\GenreRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -70,7 +71,7 @@ class GenreController extends AbstractController
 
             return new JsonResponse(
                 [
-                    "message" => SystemMessage::SY0001
+                    "message" => Message::MG0005
                 ],
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
@@ -94,7 +95,7 @@ class GenreController extends AbstractController
             if (!$genre) {
                 return new JsonResponse(
                     [
-                        "message" => GenreMessage::GR0002
+                        "message" => Message::MG0004
                     ],
                     Response::HTTP_NOT_FOUND
                 );
@@ -121,7 +122,7 @@ class GenreController extends AbstractController
             $this->manager->rollback();
 
             return new JsonResponse([
-                "message" => SystemMessage::SY0001
+                "message" => Message::MG0005
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
