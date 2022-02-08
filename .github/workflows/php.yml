@@ -12,6 +12,9 @@ jobs:
 
     - name: Validar syntaxe da pasta src
       run: php -l src/
+    
+    - name: Instalando dependencias
+      run: composer install --dev
       
     - name: Rodar testes
       run: composer codecept run unit
