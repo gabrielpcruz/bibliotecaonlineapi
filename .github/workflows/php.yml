@@ -12,5 +12,11 @@ jobs:
 
     - name: Validar syntaxe da pasta src
       run: php -l src/
+      
+    - name: Setup PHP with Xdebug 2.x
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '7.4'
+        coverage: xdebug2
 
 
