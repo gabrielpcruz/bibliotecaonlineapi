@@ -10,11 +10,6 @@ use InvalidArgumentException;
 class GenreFactoryTest extends Unit
 {
     /**
-     * @var UnitTester
-     */
-    protected UnitTester $tester;
-
-    /**
      * @var GenreFactory
      */
     protected GenreFactory $genreFactory;
@@ -40,6 +35,8 @@ class GenreFactoryTest extends Unit
         // Verificando se campos não estão vazios
         $this->assertNotEmpty($genre->getName());
         $this->assertNotEmpty($genre->getDescription());
+        //Verificando se campo descrição e maior que 30
+        $this->assertGreaterThanOrEqual(30 , strlen($genre->getDescription()));
         // Verificando se campos são strings
         $this->assertIsString($genre->getName());
         $this->assertIsString($genre->getDescription());
