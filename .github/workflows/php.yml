@@ -10,9 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
+    - name: Validar syntaxe da pasta src
+      run: php -l src/
 
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
 
